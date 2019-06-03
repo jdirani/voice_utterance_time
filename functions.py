@@ -229,7 +229,6 @@ def semi_auto_utterance_times(dir_in, dir_out, fs=44100):
 
 
 
-# Returns a dict with trialnum, target, and rt
 def semi_auto_utterance_times_PorthalFormat(dir_in, dir_out, fs=44100):
     '''
     Returns list of RTs and csv with RTs and trial info, and saves plots to dir_out.
@@ -267,16 +266,20 @@ def semi_auto_utterance_times_PorthalFormat(dir_in, dir_out, fs=44100):
 
         # plot and fix rt
         manual_rts = [] # DEFINED HERE manual_rts
-        fig, ax = plt.subplots(figsize=((18,5)))
-        plt.title(v)
-        ax.plot(X_axis, signal, color='b')
+        fig, axes = plt.subplots(2,1, figsize=((18,10)), sharex=False)
+        plt.subplots_adjust(hspace=0.1)
+        plt.suptitle(v)
+        axes[0].plot(X_axis, signal, color='b') #Wave
+        axes[1].specgram(signal, Fs=fs, cmap='hot_r') #Spectogram
+        assert False, 'X axes currently not aligned, fix'
+
         if rt_auto:
-            ax.axvline(rt_auto[1], color='r')
+            axes[0].axvline(rt_auto[1], color='r')
+
+        ax = axes[0] # in order for cid below to work
         cid = fig.canvas.mpl_connect('button_press_event', onpick)
         raw_input('press enter to continue...') #pauses to wait for cid to finish
 
-        # print "rt manual ", rt_manual
-        # print "manual_rts (%s)"%len(manual_rts), manual_rts
 
         if len(manual_rts) > 0:
             # rt = (manual_rts[-1][0], manual_rts[-1][1]*1000) #Keep idx as is, convert rt to milliseconds. commented out because idx=milliseconds now.
